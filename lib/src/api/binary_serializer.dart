@@ -7,8 +7,25 @@ class BinarySerializer {
 
   BinarySerializer(int length) : byteData = ByteData(length);
 
-  BinarySerializer.fromUint8List(Uint8List uint8List)
-      : byteData = ByteData.sublistView(uint8List);
+  BinarySerializer.fromUint8List(Uint8List uint8List) : byteData = ByteData.sublistView(uint8List);
+
+  void writeBytes(Uint8List bytes) {
+    for (final byte in bytes) {
+      byteData.setUint8(_offset, byte);
+      _offset += 1;
+    }
+  }
+
+  Uint8List readBytes(int length) {
+    Uint8List data = Uint8List(length);
+
+    for (var i = 0; i < length; i++) {
+      data[i] = (byteData.getUint8(_offset));
+      _offset += 1;
+    }
+
+    return data.buffer.asUint8List();
+  }
 
   void writeInt8(int value) {
     byteData.setInt8(_offset, value);
@@ -68,9 +85,7 @@ class BinarySerializer {
   void writeString(String value) {
     final encoded = utf8.encode(value);
     writeInt32(encoded.length); // Записываем длину строки
-    byteData.buffer
-        .asUint8List()
-        .setRange(_offset, _offset + encoded.length, encoded);
+    byteData.buffer.asUint8List().setRange(_offset, _offset + encoded.length, encoded);
     _offset += encoded.length;
   }
 

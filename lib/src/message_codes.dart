@@ -3,4 +3,9 @@ enum MessageCode {
   successJoinResponse,
   // errorJoinResponse,
   // chatMessage,
+  // Game
+  player,
+  mark,
+  battlefield,
+  gameSnapshot,
 }

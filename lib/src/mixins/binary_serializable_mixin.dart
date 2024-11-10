@@ -5,6 +5,7 @@ import 'package:models/src/api/binary_serializer.dart';
 import 'package:models/src/api/data_type.dart';
 import 'package:models/src/extensions/data_type_extension.dart';
 import 'package:models/src/message_codes.dart';
+import 'package:models/src/serializable_data/serializable_data.dart';
 
 /// Вспомогательные методы для сериализации и десериализации
 mixin BinarySerializableMixin {
@@ -19,6 +20,14 @@ mixin BinarySerializableMixin {
     count += 2;
 
     for (final prop in props) {
+      if (prop is Iterable<SerializableData>) {
+        for (final item in prop) {
+          count += item.bytesLength;
+        }
+
+        continue;
+      }
+
       count += switch (prop.type) {
         DataType.int32 => DataType.int32.offset,
         DataType.string => 4 + utf8.encode((prop as String)).length,
